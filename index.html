@@ -17,7 +17,7 @@
       margin: 0 auto;
       padding: 20px;
       background: #111827;
-      color: white;
+      color: #ffffff;
     }
 
     h1 {
@@ -25,7 +25,7 @@
     }
 
     h2 {
-      margin-top: 30px;
+      margin-top: 0;
       font-size: 20px;
     }
 
@@ -44,7 +44,7 @@
     label {
       display: block;
       margin-top: 10px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       color: #cbd5e1;
     }
 
@@ -74,6 +74,10 @@
       opacity: 0.85;
     }
 
+    .secondary {
+      background: #475569;
+    }
+
     .danger {
       background: #dc2626;
     }
@@ -83,7 +87,7 @@
       border: 1px solid #334155;
       padding: 15px;
       border-radius: 8px;
-      min-height: 120px;
+      min-height: 150px;
       white-space: pre-wrap;
       word-break: break-word;
       overflow-x: auto;
@@ -94,6 +98,13 @@
       padding: 12px;
       border-radius: 6px;
       margin-top: 10px;
+      word-break: break-word;
+    }
+
+    .note {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -103,17 +114,21 @@
   <h1>Anime Quiz API Tester</h1>
 
   <p class="description">
-    Test all important Google Apps Script API functions.
+    Test the Google Apps Script API used by the Anime Quiz website.
   </p>
 
 
-  <!-- PLAYER INFORMATION -->
+  <!-- =========================================================
+       PLAYER
+       ========================================================= -->
 
   <div class="section">
 
-    <h2>Player</h2>
+    <h2>1. Player</h2>
 
-    <label for="playerName">Player Name</label>
+    <label for="playerName">
+      Player Name
+    </label>
 
     <input
       id="playerName"
@@ -122,16 +137,18 @@
       placeholder="Enter player name"
     >
 
-    <label for="playerId">Player ID</label>
+    <label for="playerId">
+      Player ID
+    </label>
 
     <input
       id="playerId"
       type="text"
-      placeholder="Player ID will appear here"
+      placeholder="Create a player first"
     >
 
     <div class="player-info">
-      Current Player ID:
+      Current saved Player ID:
       <strong id="currentPlayerId">None</strong>
     </div>
 
@@ -145,14 +162,23 @@
       Check Player
     </button>
 
+    <button
+      class="secondary"
+      onclick="clearSavedPlayer()"
+    >
+      Clear Saved Player
+    </button>
+
   </div>
 
 
-  <!-- BASIC API -->
+  <!-- =========================================================
+       HEALTH
+       ========================================================= -->
 
   <div class="section">
 
-    <h2>Basic API</h2>
+    <h2>2. API Health</h2>
 
     <button onclick="testHealth()">
       Test Health
@@ -161,15 +187,13 @@
   </div>
 
 
-  <!-- SCORE TESTING -->
+  <!-- =========================================================
+       UPDATE SCORES
+       ========================================================= -->
 
   <div class="section">
 
-    <h2>Submit Scores</h2>
-
-    <p>
-      These buttons simulate the quiz sending a player's best score.
-    </p>
+    <h2>3. Update Scores</h2>
 
     <label for="score">
       Percentage
@@ -184,80 +208,86 @@
     >
 
     <button onclick="submitScore('Character')">
-      Submit Character Score
+      Submit Character
     </button>
 
     <button onclick="submitScore('Colour')">
-      Submit Colour Score
+      Submit Colour
     </button>
 
     <button onclick="submitScore('Zoom')">
-      Submit Zoom Score
+      Submit Zoom
     </button>
+
+    <p class="note">
+      Try submitting a lower score after a higher score.
+      The stored best score should remain unchanged.
+    </p>
 
   </div>
 
 
-  <!-- LEADERBOARD -->
+  <!-- =========================================================
+       LEADERBOARDS
+       ========================================================= -->
 
   <div class="section">
 
-    <h2>Leaderboards</h2>
+    <h2>4. Leaderboards</h2>
 
     <button onclick="getLeaderboard('Character')">
-      Character Leaderboard
+      Character
     </button>
 
     <button onclick="getLeaderboard('Colour')">
-      Colour Leaderboard
+      Colour
     </button>
 
     <button onclick="getLeaderboard('Zoom')">
-      Zoom Leaderboard
+      Zoom
     </button>
 
     <button onclick="getLeaderboard('Combined')">
-      Combined Leaderboard
+      Combined
     </button>
 
   </div>
 
 
-  <!-- PLAYER SCORES -->
+  <!-- =========================================================
+       PLAYER DATA
+       ========================================================= -->
 
   <div class="section">
 
-    <h2>Player Scores</h2>
+    <h2>5. Player Data</h2>
 
     <button onclick="getPlayerScores()">
       Get Player Scores
     </button>
 
-    <button onclick="getPlayerCategoryScores()">
-      Get Category Scores
-    </button>
-
   </div>
 
 
-  <!-- RESULT -->
+  <!-- =========================================================
+       RESULT
+       ========================================================= -->
 
   <div class="section">
 
     <h2>API Response</h2>
 
-    <div id="result">
-Ready...
-    </div>
+    <div id="result">Ready...</div>
+
   </div>
 
 
   <script>
 
     /*
-      ============================================================
-      GOOGLE APPS SCRIPT API
-      ============================================================
+    ============================================================
+    GOOGLE APPS SCRIPT WEB APP URL
+    ============================================================
     */
 
     const API_URL =
@@ -265,9 +295,9 @@ Ready...
 
 
     /*
-      ============================================================
-      INITIALIZE SAVED PLAYER ID
-      ============================================================
+    ============================================================
+    LOAD SAVED PLAYER ID
+    ============================================================
     */
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -288,9 +318,9 @@ Ready...
 
 
     /*
-      ============================================================
-      HELPER: GET PLAYER ID
-      ============================================================
+    ============================================================
+    GET PLAYER ID
+    ============================================================
     */
 
     function getPlayerId() {
@@ -300,7 +330,7 @@ Ready...
 
       if (!playerId) {
 
-        alert("Enter or create a Player ID first.");
+        alert("Create or enter a Player ID first.");
 
         return null;
       }
@@ -310,9 +340,9 @@ Ready...
 
 
     /*
-      ============================================================
-      HELPER: DISPLAY RESULT
-      ============================================================
+    ============================================================
+    DISPLAY RESULT
+    ============================================================
     */
 
     function showResult(data) {
@@ -325,14 +355,16 @@ Ready...
 
 
     /*
-      ============================================================
-      HEALTH
-      ============================================================
+    ============================================================
+    HEALTH
+    ============================================================
+    GET → doGet(e)
+    ============================================================
     */
 
     async function testHealth() {
 
-      showResult("Testing health...");
+      showResult("Testing API health...");
 
       try {
 
@@ -361,15 +393,19 @@ Ready...
 
 
     /*
-      ============================================================
-      CREATE PLAYER
-      ============================================================
+    ============================================================
+    CREATE PLAYER
+    ============================================================
+    POST → doPost(e)
+    ============================================================
     */
 
     async function createPlayer() {
 
       const playerName =
-        document.getElementById("playerName").value.trim();
+        document.getElementById("playerName")
+          .value
+          .trim();
 
       if (!playerName) {
 
@@ -414,7 +450,7 @@ Ready...
 
 
         /*
-          Try to save returned Player ID
+        Save returned Player ID.
         */
 
         try {
@@ -436,7 +472,7 @@ Ready...
             );
           }
 
-        } catch (e) {
+        } catch (error) {
 
           // Response wasn't JSON.
         }
@@ -452,59 +488,70 @@ Ready...
 
 
     /*
-      ============================================================
-      CHECK PLAYER
-      ============================================================
+    ============================================================
+    CHECK PLAYER
+    ============================================================
+    POST → doPost(e)
+    ============================================================
     */
 
-   async function checkPlayer() {
+    async function checkPlayer() {
 
-  const playerId = getPlayerId();
+      const playerId =
+        getPlayerId();
 
-  if (!playerId) return;
+      if (!playerId) return;
 
-  showResult("Checking player...");
+      showResult("Checking player...");
 
-  try {
+      try {
 
-    const response = await fetch(API_URL, {
+        const response = await fetch(
+          API_URL,
+          {
+            method: "POST",
 
-      method: "POST",
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
 
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
+            body: JSON.stringify({
 
-      body: JSON.stringify({
-        action: "checkPlayer",
-        playerId: playerId
-      })
+              action: "checkPlayer",
 
-    });
+              playerId: playerId
 
-    const text = await response.text();
+            })
+          }
+        );
 
-    showResult(
-      "HTTP Status: " +
-      response.status +
-      "\n\n" +
-      text
-    );
+        const text =
+          await response.text();
 
-  } catch (error) {
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
 
-    showResult(
-      "FETCH ERROR:\n\n" +
-      error.message
-    );
-  }
-}
+      } catch (error) {
+
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
+      }
+    }
 
 
     /*
-      ============================================================
-      SUBMIT SCORE
-      ============================================================
+    ============================================================
+    UPDATE SCORE
+    ============================================================
+    POST → doPost(e)
+    ============================================================
     */
 
     async function submitScore(category) {
@@ -594,9 +641,11 @@ Ready...
 
 
     /*
-      ============================================================
-      GET LEADERBOARD
-      ============================================================
+    ============================================================
+    GET LEADERBOARD
+    ============================================================
+    GET → doGet(e)
+    ============================================================
     */
 
     async function getLeaderboard(category) {
@@ -642,9 +691,15 @@ Ready...
 
 
     /*
-      ============================================================
-      GET PLAYER SCORES
-      ============================================================
+    ============================================================
+    GET PLAYER SCORES
+    ============================================================
+    POST → doPost(e)
+
+    This assumes your Apps Script has:
+    action === "getPlayerScores"
+    inside doPost().
+    ============================================================
     */
 
     async function getPlayerScores() {
@@ -663,11 +718,23 @@ Ready...
       try {
 
         const response = await fetch(
+          API_URL,
+          {
+            method: "POST",
 
-          API_URL +
-          "?action=getPlayerScores&playerId=" +
-          encodeURIComponent(playerId)
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
 
+            body: JSON.stringify({
+
+              action: "getPlayerScores",
+
+              playerId: playerId
+
+            })
+          }
         );
 
 
@@ -694,54 +761,29 @@ Ready...
 
 
     /*
-      ============================================================
-      GET CATEGORY PLAYER SCORES
-      ============================================================
+    ============================================================
+    CLEAR TEST PLAYER
+    ============================================================
+    This only clears the browser's saved ID.
+    It DOES NOT delete the player from Google Sheets.
+    ============================================================
     */
 
-    async function getPlayerCategoryScores() {
+    function clearSavedPlayer() {
 
-      const playerId =
-        getPlayerId();
-
-      if (!playerId) return;
-
-
-      showResult(
-        "Getting category scores..."
+      localStorage.removeItem(
+        "testPlayerId"
       );
 
+      document.getElementById("playerId").value =
+        "";
 
-      try {
+      document.getElementById("currentPlayerId").textContent =
+        "None";
 
-        const response = await fetch(
-
-          API_URL +
-          "?action=getPlayerCategoryScores&playerId=" +
-          encodeURIComponent(playerId)
-
-        );
-
-
-        const text =
-          await response.text();
-
-
-        showResult(
-          "HTTP Status: " +
-          response.status +
-          "\n\n" +
-          text
-        );
-
-
-      } catch (error) {
-
-        showResult(
-          "FETCH ERROR:\n\n" +
-          error.message
-        );
-      }
+      showResult(
+        "Saved test Player ID cleared from this browser."
+      );
     }
 
   </script>

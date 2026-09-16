@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Quiz API Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    button {
+      padding: 12px 18px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f1f1f1;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Anime Quiz API Test</h1>
+
+  <button onclick="testHealth()">
+    Test Health
+  </button>
+
+  <button onclick="createPlayer()">
+    Create Test Player
+  </button>
+
+  <button onclick="getLeaderboard()">
+    Get Leaderboard
+  </button>
+
+  <div id="result">Ready...</div>
+
+  <script>
+
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycby9kBqyW1Kvy8o3rdEXzKS7TRZgSLo4zdMBt19msbdOw8NYZFLrnyHC30mCWMFZz1p17g/exec";
+
+
+    async function testHealth() {
+
+      document.getElementById("result").textContent =
+        "Testing...";
+
+      try {
+
+        const response = await fetch(
+          API_URL + "?action=health"
+        );
+
+        const text = await response.text();
+
+        document.getElementById("result").textContent =
+          "HTTP Status: " + response.status +
+          "\n\nResponse:\n" + text;
+
+      } catch (error) {
+
+        document.getElementById("result").textContent =
+          "ERROR:\n" + error.message;
+      }
+    }
+
+
+    async function createPlayer() {
+
+      document.getElementById("result").textContent =
+        "Creating player...";
+
+      try {
+
+        const response = await fetch(API_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+
+          body: JSON.stringify({
+            action: "createPlayer",
+            playerName: "PhoneTest"
+          })
+
+        });
+
+        const text = await response.text();
+
+        document.getElementById("result").textContent =
+          "HTTP Status: " + response.status +
+          "\n\nResponse:\n" + text;
+
+      } catch (error) {
+
+        document.getElementById("result").textContent =
+          "ERROR:\n" + error.message;
+      }
+    }
+
+
+    async function getLeaderboard() {
+
+      document.getElementById("result").textContent =
+        "Loading leaderboard...";
+
+      try {
+
+        const response = await fetch(
+          API_URL +
+          "?action=getLeaderboard&category=Combined"
+        );
+
+        const text = await response.text();
+
+        document.getElementById("result").textContent =
+          "HTTP Status: " + response.status +
+          "\n\nResponse:\n" + text;
+
+      } catch (error) {
+
+        document.getElementById("result").textContent =
+          "ERROR:\n" + error.message;
+      }
+    }
+
+  </script>
+
+</body>
+</html>

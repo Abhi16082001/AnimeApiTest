@@ -3,60 +3,336 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Quiz API Test</title>
+
+  <title>Anime Quiz API Tester</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
+      max-width: 800px;
+      margin: 0 auto;
       padding: 20px;
+      background: #111827;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-size: 20px;
+    }
+
+    .description {
+      color: #cbd5e1;
+      margin-bottom: 25px;
+    }
+
+    .section {
+      background: #1f2937;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #cbd5e1;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: white;
+      margin-bottom: 10px;
     }
 
     button {
-      padding: 12px 18px;
-      margin: 5px;
+      padding: 10px 14px;
+      margin: 5px 5px 5px 0;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      background: #6366f1;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .danger {
+      background: #dc2626;
     }
 
     #result {
-      margin-top: 20px;
+      background: #020617;
+      border: 1px solid #334155;
       padding: 15px;
-      background: #f1f1f1;
+      border-radius: 8px;
+      min-height: 120px;
       white-space: pre-wrap;
       word-break: break-word;
+      overflow-x: auto;
+    }
+
+    .player-info {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Anime Quiz API Test</h1>
+  <h1>Anime Quiz API Tester</h1>
 
-  <button onclick="testHealth()">
-    Test Health
-  </button>
+  <p class="description">
+    Test all important Google Apps Script API functions.
+  </p>
 
-  <button onclick="createPlayer()">
-    Create Test Player
-  </button>
 
-  <button onclick="getLeaderboard()">
-    Get Leaderboard
-  </button>
+  <!-- PLAYER INFORMATION -->
 
-  <div id="result">Ready...</div>
+  <div class="section">
+
+    <h2>Player</h2>
+
+    <label for="playerName">Player Name</label>
+
+    <input
+      id="playerName"
+      type="text"
+      value="PhoneTest"
+      placeholder="Enter player name"
+    >
+
+    <label for="playerId">Player ID</label>
+
+    <input
+      id="playerId"
+      type="text"
+      placeholder="Player ID will appear here"
+    >
+
+    <div class="player-info">
+      Current Player ID:
+      <strong id="currentPlayerId">None</strong>
+    </div>
+
+    <br>
+
+    <button onclick="createPlayer()">
+      Create Player
+    </button>
+
+    <button onclick="checkPlayer()">
+      Check Player
+    </button>
+
+  </div>
+
+
+  <!-- BASIC API -->
+
+  <div class="section">
+
+    <h2>Basic API</h2>
+
+    <button onclick="testHealth()">
+      Test Health
+    </button>
+
+  </div>
+
+
+  <!-- SCORE TESTING -->
+
+  <div class="section">
+
+    <h2>Submit Scores</h2>
+
+    <p>
+      These buttons simulate the quiz sending a player's best score.
+    </p>
+
+    <label for="score">
+      Percentage
+    </label>
+
+    <input
+      id="score"
+      type="number"
+      min="0"
+      max="100"
+      value="80"
+    >
+
+    <button onclick="submitScore('Character')">
+      Submit Character Score
+    </button>
+
+    <button onclick="submitScore('Colour')">
+      Submit Colour Score
+    </button>
+
+    <button onclick="submitScore('Zoom')">
+      Submit Zoom Score
+    </button>
+
+  </div>
+
+
+  <!-- LEADERBOARD -->
+
+  <div class="section">
+
+    <h2>Leaderboards</h2>
+
+    <button onclick="getLeaderboard('Character')">
+      Character Leaderboard
+    </button>
+
+    <button onclick="getLeaderboard('Colour')">
+      Colour Leaderboard
+    </button>
+
+    <button onclick="getLeaderboard('Zoom')">
+      Zoom Leaderboard
+    </button>
+
+    <button onclick="getLeaderboard('Combined')">
+      Combined Leaderboard
+    </button>
+
+  </div>
+
+
+  <!-- PLAYER SCORES -->
+
+  <div class="section">
+
+    <h2>Player Scores</h2>
+
+    <button onclick="getPlayerScores()">
+      Get Player Scores
+    </button>
+
+    <button onclick="getPlayerCategoryScores()">
+      Get Category Scores
+    </button>
+
+  </div>
+
+
+  <!-- RESULT -->
+
+  <div class="section">
+
+    <h2>API Response</h2>
+
+    <div id="result">
+Ready...
+    </div>
+  </div>
+
 
   <script>
+
+    /*
+      ============================================================
+      GOOGLE APPS SCRIPT API
+      ============================================================
+    */
 
     const API_URL =
       "https://script.google.com/macros/s/AKfycby9kBqyW1Kvy8o3rdEXzKS7TRZgSLo4zdMBt19msbdOw8NYZFLrnyHC30mCWMFZz1p17g/exec";
 
 
-    async function testHealth() {
+    /*
+      ============================================================
+      INITIALIZE SAVED PLAYER ID
+      ============================================================
+    */
+
+    window.addEventListener("DOMContentLoaded", () => {
+
+      const savedPlayerId =
+        localStorage.getItem("testPlayerId");
+
+      if (savedPlayerId) {
+
+        document.getElementById("playerId").value =
+          savedPlayerId;
+
+        document.getElementById("currentPlayerId").textContent =
+          savedPlayerId;
+      }
+
+    });
+
+
+    /*
+      ============================================================
+      HELPER: GET PLAYER ID
+      ============================================================
+    */
+
+    function getPlayerId() {
+
+      const playerId =
+        document.getElementById("playerId").value.trim();
+
+      if (!playerId) {
+
+        alert("Enter or create a Player ID first.");
+
+        return null;
+      }
+
+      return playerId;
+    }
+
+
+    /*
+      ============================================================
+      HELPER: DISPLAY RESULT
+      ============================================================
+    */
+
+    function showResult(data) {
 
       document.getElementById("result").textContent =
-        "Testing...";
+        typeof data === "string"
+          ? data
+          : JSON.stringify(data, null, 2);
+    }
+
+
+    /*
+      ============================================================
+      HEALTH
+      ============================================================
+    */
+
+    async function testHealth() {
+
+      showResult("Testing health...");
 
       try {
 
@@ -64,78 +340,400 @@
           API_URL + "?action=health"
         );
 
-        const text = await response.text();
+        const text =
+          await response.text();
 
-        document.getElementById("result").textContent =
-          "HTTP Status: " + response.status +
-          "\n\nResponse:\n" + text;
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
 
       } catch (error) {
 
-        document.getElementById("result").textContent =
-          "ERROR:\n" + error.message;
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
       }
     }
 
+
+    /*
+      ============================================================
+      CREATE PLAYER
+      ============================================================
+    */
 
     async function createPlayer() {
 
-      document.getElementById("result").textContent =
-        "Creating player...";
+      const playerName =
+        document.getElementById("playerName").value.trim();
+
+      if (!playerName) {
+
+        alert("Enter a player name.");
+
+        return;
+      }
+
+      showResult("Creating player...");
 
       try {
 
-        const response = await fetch(API_URL, {
+        const response = await fetch(
+          API_URL,
+          {
+            method: "POST",
 
-          method: "POST",
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
 
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
+            body: JSON.stringify({
 
-          body: JSON.stringify({
-            action: "createPlayer",
-            playerName: "PhoneTest"
-          })
+              action: "createPlayer",
 
-        });
+              playerName: playerName
 
-        const text = await response.text();
+            })
+          }
+        );
 
-        document.getElementById("result").textContent =
-          "HTTP Status: " + response.status +
-          "\n\nResponse:\n" + text;
+        const text =
+          await response.text();
+
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
+
+
+        /*
+          Try to save returned Player ID
+        */
+
+        try {
+
+          const data =
+            JSON.parse(text);
+
+          if (data.playerId) {
+
+            document.getElementById("playerId").value =
+              data.playerId;
+
+            document.getElementById("currentPlayerId").textContent =
+              data.playerId;
+
+            localStorage.setItem(
+              "testPlayerId",
+              data.playerId
+            );
+          }
+
+        } catch (e) {
+
+          // Response wasn't JSON.
+        }
 
       } catch (error) {
 
-        document.getElementById("result").textContent =
-          "ERROR:\n" + error.message;
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
       }
     }
 
 
-    async function getLeaderboard() {
+    /*
+      ============================================================
+      CHECK PLAYER
+      ============================================================
+    */
 
-      document.getElementById("result").textContent =
-        "Loading leaderboard...";
+    async function checkPlayer() {
+
+      const playerId =
+        getPlayerId();
+
+      if (!playerId) return;
+
+      showResult("Checking player...");
 
       try {
 
         const response = await fetch(
           API_URL +
-          "?action=getLeaderboard&category=Combined"
+          "?action=checkPlayer&playerId=" +
+          encodeURIComponent(playerId)
         );
 
-        const text = await response.text();
+        const text =
+          await response.text();
 
-        document.getElementById("result").textContent =
-          "HTTP Status: " + response.status +
-          "\n\nResponse:\n" + text;
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
 
       } catch (error) {
 
-        document.getElementById("result").textContent =
-          "ERROR:\n" + error.message;
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
+      }
+    }
+
+
+    /*
+      ============================================================
+      SUBMIT SCORE
+      ============================================================
+    */
+
+    async function submitScore(category) {
+
+      const playerId =
+        getPlayerId();
+
+      if (!playerId) return;
+
+
+      const percentage =
+        Number(
+          document.getElementById("score").value
+        );
+
+
+      if (
+        Number.isNaN(percentage) ||
+        percentage < 0 ||
+        percentage > 100
+      ) {
+
+        alert(
+          "Percentage must be between 0 and 100."
+        );
+
+        return;
+      }
+
+
+      showResult(
+        "Submitting " +
+        category +
+        " score..."
+      );
+
+
+      try {
+
+        const response = await fetch(
+          API_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify({
+
+              action: "updateScores",
+
+              playerId: playerId,
+
+              scores: {
+
+                [category]: percentage
+
+              }
+
+            })
+          }
+        );
+
+
+        const text =
+          await response.text();
+
+
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
+
+
+      } catch (error) {
+
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
+      }
+    }
+
+
+    /*
+      ============================================================
+      GET LEADERBOARD
+      ============================================================
+    */
+
+    async function getLeaderboard(category) {
+
+      showResult(
+        "Loading " +
+        category +
+        " leaderboard..."
+      );
+
+
+      try {
+
+        const response = await fetch(
+
+          API_URL +
+          "?action=getLeaderboard&category=" +
+          encodeURIComponent(category)
+
+        );
+
+
+        const text =
+          await response.text();
+
+
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
+
+
+      } catch (error) {
+
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
+      }
+    }
+
+
+    /*
+      ============================================================
+      GET PLAYER SCORES
+      ============================================================
+    */
+
+    async function getPlayerScores() {
+
+      const playerId =
+        getPlayerId();
+
+      if (!playerId) return;
+
+
+      showResult(
+        "Getting player scores..."
+      );
+
+
+      try {
+
+        const response = await fetch(
+
+          API_URL +
+          "?action=getPlayerScores&playerId=" +
+          encodeURIComponent(playerId)
+
+        );
+
+
+        const text =
+          await response.text();
+
+
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
+
+
+      } catch (error) {
+
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
+      }
+    }
+
+
+    /*
+      ============================================================
+      GET CATEGORY PLAYER SCORES
+      ============================================================
+    */
+
+    async function getPlayerCategoryScores() {
+
+      const playerId =
+        getPlayerId();
+
+      if (!playerId) return;
+
+
+      showResult(
+        "Getting category scores..."
+      );
+
+
+      try {
+
+        const response = await fetch(
+
+          API_URL +
+          "?action=getPlayerCategoryScores&playerId=" +
+          encodeURIComponent(playerId)
+
+        );
+
+
+        const text =
+          await response.text();
+
+
+        showResult(
+          "HTTP Status: " +
+          response.status +
+          "\n\n" +
+          text
+        );
+
+
+      } catch (error) {
+
+        showResult(
+          "FETCH ERROR:\n\n" +
+          error.message
+        );
       }
     }
 

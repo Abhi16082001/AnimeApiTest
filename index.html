@@ -702,63 +702,40 @@
     ============================================================
     */
 
-    async function getPlayerScores() {
+ async function getPlayerScores() {
+  const playerId = getPlayerId();
 
-      const playerId =
-        getPlayerId();
+  if (!playerId) {
+    showResult("No Player ID found.");
+    return;
+  }
 
-      if (!playerId) return;
+  showResult("Getting player scores...");
 
+  try {
+    const url =
+      API_URL +
+      "?action=getPlayerScores&playerId=" +
+      encodeURIComponent(playerId);
 
-      showResult(
-        "Getting player scores..."
-      );
+    const response = await fetch(url);
 
+    const text = await response.text();
 
-      try {
+    showResult(
+      "HTTP Status: " +
+      response.status +
+      "\n\n" +
+      text
+    );
 
-        const response = await fetch(
-          API_URL,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "text/plain;charset=utf-8"
-            },
-
-            body: JSON.stringify({
-
-              action: "getPlayerScores",
-
-              playerId: playerId
-
-            })
-          }
-        );
-
-
-        const text =
-          await response.text();
-
-
-        showResult(
-          "HTTP Status: " +
-          response.status +
-          "\n\n" +
-          text
-        );
-
-
-      } catch (error) {
-
-        showResult(
-          "FETCH ERROR:\n\n" +
-          error.message
-        );
-      }
-    }
-
+  } catch (error) {
+    showResult(
+      "FETCH ERROR:\n\n" +
+      error.message
+    );
+  }
+}
 
     /*
     ============================================================

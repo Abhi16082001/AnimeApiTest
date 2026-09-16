@@ -457,41 +457,48 @@ Ready...
       ============================================================
     */
 
-    async function checkPlayer() {
+   async function checkPlayer() {
 
-      const playerId =
-        getPlayerId();
+  const playerId = getPlayerId();
 
-      if (!playerId) return;
+  if (!playerId) return;
 
-      showResult("Checking player...");
+  showResult("Checking player...");
 
-      try {
+  try {
 
-        const response = await fetch(
-          API_URL +
-          "?action=checkPlayer&playerId=" +
-          encodeURIComponent(playerId)
-        );
+    const response = await fetch(API_URL, {
 
-        const text =
-          await response.text();
+      method: "POST",
 
-        showResult(
-          "HTTP Status: " +
-          response.status +
-          "\n\n" +
-          text
-        );
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
 
-      } catch (error) {
+      body: JSON.stringify({
+        action: "checkPlayer",
+        playerId: playerId
+      })
 
-        showResult(
-          "FETCH ERROR:\n\n" +
-          error.message
-        );
-      }
-    }
+    });
+
+    const text = await response.text();
+
+    showResult(
+      "HTTP Status: " +
+      response.status +
+      "\n\n" +
+      text
+    );
+
+  } catch (error) {
+
+    showResult(
+      "FETCH ERROR:\n\n" +
+      error.message
+    );
+  }
+}
 
 
     /*
